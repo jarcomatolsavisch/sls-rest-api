@@ -23,24 +23,30 @@ functions:
       - http:
           method: post
           path: notes
+          authorizer: authorizer
   getAllNotes:
     handler: handler.getAllNotes
     events:
       - http:
           method: get
           path: notes
+          authorizer: authorizer
   updateNote:
     handler: handler.updateNote
     events:
       - http:
           method: put
           path: notes/{id}
+          authorizer: authorizer
   deleteNote:
     handler: handler.deleteNote
     events:
       - http:
           method: delete
           path: notes/{id}
+          authorizer: authorizer
+  authorizer:
+    handler: authorizer.handler
 
 
 plugins:
