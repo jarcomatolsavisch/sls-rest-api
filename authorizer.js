@@ -1,3 +1,10 @@
+const {CognitoJwtVerifier} = require("aws-jwt-verify")
+const jwtVerifier = CognitoJwtVerifier.create({
+    userPoolId: process.env.COGNITO_USERPOOL_ID,
+    tokenUse: "id",
+    clientId: process.env.COGNITO_WEBCLIENT_ID,
+});
+
 const generatePolicy = (principalId, effect, resource) => {
     let authResponse = {};
 
@@ -29,8 +36,23 @@ const generatePolicy = (principalId, effect, resource) => {
     console.log(JSON.stringify(authResponse));
     return authResponse;
 }
-module.exports.handler = (event, context, callback) => {
+
+module.exports.handler = async (event, context, callback) => {
     //lambda authorizer
+    let token = event.authorizationToken;
+    //Validate the token generated from user pool
+    console.log(token)
+
+    let payload= await jwtVerifier.verify(token);
+    console.log("Token is valid. Payload:", payload);
+    
+    try{
+        callback(null, generatePolicy("user", "Allow", event.methodArn));
+    }catch(err){
+        callback("Error: Invalid statement");
+    }
+    
+    /*
     let token = event.authorizationToken; // "allow" or "deny"
     switch(token) {
         case "allow":
@@ -42,4 +64,5 @@ module.exports.handler = (event, context, callback) => {
         default:
             callback("Error: Invalid statement");
     }
+    */
 }

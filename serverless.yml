@@ -10,6 +10,8 @@ provider:
   environment:
     NOTES_TABLE_NAME: !Ref notesTable
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    COGNITO_USERPOOL_ID: !Ref cognitoUserPool
+    COGNITO_WEBCLIENT_ID: !Ref cognitoUserPoolWebClient
   iamRoleStatements:
       - Effect: Allow
         Action:
@@ -54,14 +56,4 @@ plugins:
 
 resources:
   Resources:
-    notesTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: notes
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: noteId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: noteId
-            KeyType: HASH
+    ${file(resources.yml)}
